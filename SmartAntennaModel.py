@@ -50,17 +50,17 @@ Unoise = U[:, 1:]
 alpha = np.arange(-90, 90, 0.01)
 alpha = np.radians(alpha)
 sinAlpha = np.sin(alpha)
-Scanning = np.zeros((NumElem, len(alpha)), dtype=complex)
+Scan = np.zeros((NumElem, len(alpha)), dtype=complex)
 for i in range(len(alpha)):
-    Scanning[:, i] = np.exp(1j*2*np.pi
+    Scan[:, i] = np.exp(1j*2*np.pi
                             * (d/lamda)
                             * sinAlpha[i]*ElemArr)
 
 # CAPON
 capon = np.zeros(len(alpha), dtype=complex)
 for i in range(len(alpha)):
-    capon[i] = 1/(np.dot(np.matrix(Scanning[:, i]).H,
-                         np.dot(R_1, Scanning[:, i])))
+    capon[i] = 1/(np.dot(np.matrix(Scan[:, i]).H,
+                         np.dot(R_1, Scan[:, i])))
 
 """
 # plots
