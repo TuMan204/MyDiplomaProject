@@ -68,4 +68,5 @@ plt.subplots(figsize=(10, 5))
 plt.plot(np.real(capon), color='green', label='MVDR')
 plt.grid(color='r', linestyle='-', linewidth=0.2)
 plt.show()
+<<<<<<< HEAD
 """
