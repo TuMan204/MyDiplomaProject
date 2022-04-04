@@ -10,7 +10,7 @@ k = 2*np.pi/lamda                   # волновое число
 Fd = Fnes*6                         # частота дискретизации
 N = 2048                            # число отсчетов
 SNRdB = 30                          # SNR
-NumElem = 4                         # кол-во эл-тов АР
+NumElem = 14                        # кол-во эл-тов АР
 NumDOA = 3                          # кол-во ИРИ
 dt = np.zeros(N)                    # сетка времени
 for i in range(N):
@@ -50,23 +50,40 @@ Unoise = U[:, 1:]
 alpha = np.arange(-90, 90, 0.01)
 alpha = np.radians(alpha)
 sinAlpha = np.sin(alpha)
-Scan = np.zeros((NumElem, len(alpha)), dtype=complex)
+X = np.zeros((NumElem, len(alpha)), dtype=complex)
 for i in range(len(alpha)):
-    Scan[:, i] = np.exp(1j*2*np.pi
-                            * (d/lamda)
-                            * sinAlpha[i]*ElemArr)
+    X[:, i] = np.exp(1j*2*np.pi
+                     * (d/lamda)
+                     * sinAlpha[i]*ElemArr)
 
 # CAPON
 capon = np.zeros(len(alpha), dtype=complex)
 for i in range(len(alpha)):
-    capon[i] = 1/(np.dot(np.matrix(Scan[:, i]).H,
-                         np.dot(R_1, Scan[:, i])))
+    capon[i] = 1/(np.dot(np.matrix(np.matrix(X[:, i]).H).T,
+                  np.dot(R_1, np.matrix(X[:, i]).T)))
 
-"""
+# MUSIC
+music = np.zeros(len(alpha), dtype=complex)
+for i in range(len(alpha)):
+    music[i] = (np.dot(np.matrix(np.matrix(X[:, i]).H).T, np.matrix(X[:, i]).T)
+                / np.dot(np.matrix(np.matrix(X[:, i]).H).T,
+                np.dot(Unoise, np.dot(np.matrix(Unoise).H,
+                                      np.matrix(X[:, i]).T))))
+
 # plots
-plt.subplots(figsize=(10, 5))
-plt.plot(np.real(capon), color='green', label='MVDR')
-plt.grid(color='r', linestyle='-', linewidth=0.2)
+plt.subplots(figsize=(10, 5), dpi=150)
+plt.plot(np.degrees(alpha),
+         np.real((capon / max(capon))),
+         color='green',
+         label='CAPON')
+plt.plot(np.degrees(alpha),
+         np.real((music / max(music))),
+         color='blue',
+         label='MUSIC')
+plt.grid(color='r',
+         linestyle='-',
+         linewidth=0.2)
+plt.xlabel('Azimuth angles θ (degrees)')
+plt.ylabel('Power (pseudo)spectrum (normalized)')
+plt.legend()
 plt.show()
-<<<<<<< HEAD
-"""
