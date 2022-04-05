@@ -37,7 +37,10 @@ for i in range(NumDOA):
                      * (d/lamda)
                      * sinDoAs[i]*ElemArr)              # вектора-гипотезы
 
-RecSignal = np.dot(A, Signal) + AWGN                    # принимаемый сигнал
+Parr = np.random.randint(5, 10, size=NumDOA)            # мощности сигналов
+P = np.diag(Parr)
+
+RecSignal = np.dot(A, np.dot(P, Signal)) + AWGN         # принимаемый сигнал
 
 # КОРРЕЛЯЦИОННАЯ И ОБРАТНАЯ ЕЙ МАТРИЦА
 R = np.dot(RecSignal, np.matrix(RecSignal).H)           # корр. матрица
@@ -46,7 +49,7 @@ R_1 = np.linalg.pinv(R)                                 # обрат. корр. 
 # SVD РАЗЛОЖЕНИЕ И ВЫДЕЛЕНИЕ ШУМОВОГО ПОДПРОСТРАНСТВА
 U, S, V = np.linalg.svd(R)
 Unoise = U[:, 1:]
-
+print(S)
 # ОПРЕДЕЛЕНИЕ СЕКТОРА СКАНИРОВАНИЯ
 alpha = np.arange(-90, 90, 0.01)
 alpha = np.radians(alpha)
