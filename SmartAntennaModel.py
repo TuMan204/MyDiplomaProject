@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # ИСХОДНЫЕ ДАННЫЕ
+np.random.seed(6)
 Fnes = 2.5e9                        # несущ. частота
 c = 3e8                             # скор.света
 lamda = c/Fnes                      # длина волны
@@ -67,8 +68,8 @@ music = np.zeros(len(alpha), dtype=complex)
 for i in range(len(alpha)):
     music[i] = (np.dot(np.matrix(np.matrix(X[:, i]).H).T, np.matrix(X[:, i]).T)
                 / np.dot(np.matrix(np.matrix(X[:, i]).H).T,
-                np.dot(Unoise, np.dot(np.matrix(Unoise).H,
-                                      np.matrix(X[:, i]).T))))
+                         np.dot(Unoise, np.dot(np.matrix(Unoise).H,
+                                               np.matrix(X[:, i]).T))))
 
 # plots
 plt.subplots(figsize=(10, 5), dpi=150)
