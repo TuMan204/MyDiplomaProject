@@ -22,12 +22,21 @@ DoAs = np.radians(DoAs)
 sinDoAs = np.sin(DoAs)
 
 # МОДЕЛЬ СИГНАЛА
-Signal = np.zeros((NumDOA, N), dtype=complex)
+QPSKcode = np.zeros((NumDOA, N))                        # формир. QPSK кода
+for i in range(NumDOA):
+    QPSKcode[i, :] = np.random.randint(0, 4, N)
+QPSKphase = np.radians(QPSKcode*360/4+45)
+Signal = np.zeros((NumDOA, N), dtype=complex)           # QPSK сигнал
 for i in range(NumDOA):
     for j in range(N):
-        Signal[i, j] = np.exp(1j*2*np.pi
-                              * Fnes
-                              * dt[j])                  # генерируемый сигнал
+        Signal[i, j] = (np.cos(2*np.pi*Fnes*dt[j]+QPSKphase[i, j])
+                        + 1j*np.sin(2*np.pi*Fnes*dt[j]+QPSKphase[i, j]))
+# Signal = np.zeros((NumDOA, N), dtype=complex)
+# for i in range(NumDOA):
+#     for j in range(N):
+#         Signal[i, j] = np.sin(2*np.pi
+#                               * Fnes
+#                               * dt[j])                  # синус. сигнал
 
 AWGN = np.random.randn(NumElem, N) * 10**(-SNRdB/20)    # FIXME: уточнить
 
@@ -35,7 +44,7 @@ A = np.zeros((NumElem, NumDOA), dtype=complex)
 for i in range(NumDOA):
     A[:, i] = np.exp(1j*2*np.pi
                      * (d/lamda)
-                     * sinDoAs[i]*ElemArr)              # вектора-гипотезы
+                     * sinDoAs[i]*ElemArr)              # вектора прихода сигн.
 
 Parr = np.random.randint(5, 10, size=NumDOA)            # мощности сигналов
 P = np.diag(Parr)
@@ -48,8 +57,8 @@ R_1 = np.linalg.pinv(R)                                 # обрат. корр. 
 
 # SVD РАЗЛОЖЕНИЕ И ВЫДЕЛЕНИЕ ШУМОВОГО ПОДПРОСТРАНСТВА
 U, S, V = np.linalg.svd(R)
-Unoise = U[:, 1:]
-print(S)
+Unoise = U[:, NumDOA:]
+
 # ОПРЕДЕЛЕНИЕ СЕКТОРА СКАНИРОВАНИЯ
 alpha = np.arange(-90, 90, 0.01)
 alpha = np.radians(alpha)
@@ -59,6 +68,14 @@ for i in range(len(alpha)):
     X[:, i] = np.exp(1j*2*np.pi
                      * (d/lamda)
                      * sinAlpha[i]*ElemArr)
+
+# CLASSIC
+classic = np.zeros(len(alpha), dtype=complex)
+for i in range(len(alpha)):
+    classic[i] = ((np.dot(np.matrix(np.matrix(X[:, i]).H).T,
+                   np.dot(R, np.matrix(X[:, i]).T)))
+                  / (np.dot(np.matrix(np.matrix(X[:, i]).H).T,
+                     np.matrix(X[:, i]).T)))
 
 # CAPON
 capon = np.zeros(len(alpha), dtype=complex)
@@ -74,8 +91,18 @@ for i in range(len(alpha)):
                          np.dot(Unoise, np.dot(np.matrix(Unoise).H,
                                                np.matrix(X[:, i]).T))))
 
+# ESPRIT
+# Usig = U[:, 0]
+
 # plots
 plt.subplots(figsize=(10, 5), dpi=150)
+# plt.plot(np.real(Signal[0, :]),
+#          color='green',
+#          label='CAPON')
+plt.plot(np.degrees(alpha),
+         np.real((classic / max(classic))),
+         color='crimson',
+         label='CLASSIC')
 plt.plot(np.degrees(alpha),
          np.real((capon / max(capon))),
          color='green',
