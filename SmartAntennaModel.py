@@ -10,7 +10,7 @@ d = lamda/2                         # расстояние между элеме
 k = 2*np.pi/lamda                   # волновое число
 Fd = Fnes*6                         # частота дискретизации
 N = 2048                            # число отсчетов
-SNRdB = 30                          # SNR
+SNRdB = 10                          # SNR
 NumElem = 14                        # кол-во эл-тов АР
 NumDOA = 3                          # кол-во ИРИ
 dt = np.zeros(N)                    # сетка времени
@@ -60,7 +60,7 @@ U, S, V = np.linalg.svd(R)
 Unoise = U[:, NumDOA:]
 
 # ОПРЕДЕЛЕНИЕ СЕКТОРА СКАНИРОВАНИЯ
-alpha = np.arange(-90, 90, 0.01)
+alpha = np.arange(-90, 90, 0.1)
 alpha = np.radians(alpha)
 sinAlpha = np.sin(alpha)
 X = np.zeros((NumElem, len(alpha)), dtype=complex)
