@@ -24,5 +24,3 @@
 где ![equation](https://latex.codecogs.com/svg.image?U_0) – шумовое подпространство корреляционной матрицы; ![equation](https://latex.codecogs.com/svg.image?A(\theta_k)) – вектор-гипотеза в определенном угловом направлении.
 Пример пеленгационного рельефа алгоритма CAPON приведен на следующем рисунке.
 ![avatar](https://ie.wampi.ru/2022/04/05/music_for_md.png)
-
-https://latex.codecogs.com/svg.image?P=\frac{A(\theta_k)^H\cdot&space;R\cdot&space;A(\theta_k)}{A(\theta_k)^H\cdot&space;A(\theta_k)}
