@@ -92,13 +92,21 @@ for i in range(len(alpha)):
                                                np.matrix(X[:, i]).T))))
 
 # ESPRIT
-# Usig = U[:, 0]
+Usig = U[:, :NumDOA]
+UsigX = np.matrix(np.matrix(Usig[:(NumElem-1), :]).T).H
+UsigY = np.matrix(Usig[1:, :]).T
+Psi = np.dot(UsigY, UsigX)
+Spsi, Vpsi = np.linalg.eig(Psi)
+phi = np.zeros((len(Spsi)))
+for i in range(len(Spsi)):
+    phi[i] = np.arcsin(np.angle(Spsi[i])/np.pi)
+esprit = np.degrees(phi)
 
 # plots
 plt.subplots(figsize=(10, 5), dpi=150)
 # plt.plot(np.real(Signal[0, :]),
 #          color='green',
-#          label='CAPON')
+#          label='Signal')
 plt.plot(np.degrees(alpha),
          np.real((classic / max(classic))),
          color='crimson',
@@ -111,6 +119,11 @@ plt.plot(np.degrees(alpha),
          np.real((music / max(music))),
          color='blue',
          label='MUSIC')
+plt.plot(esprit,
+         np.ones(len(esprit)),
+         'x',
+         color='black',
+         label='ESPRIT')
 plt.grid(color='r',
          linestyle='-',
          linewidth=0.2)
