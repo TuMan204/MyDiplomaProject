@@ -17,7 +17,7 @@ dt = np.zeros(N)                    # сетка времени
 for i in range(N):
     dt[i] = i/Fd
 ElemArr = (np.arange(NumElem)).T    # массив элементов АР
-DoAs = np.array([-10, 0, 10])       # углы прихода сигналов
+DoAs = np.array([-20, 0, 10])       # углы прихода сигналов
 DoAs = np.radians(DoAs)
 sinDoAs = np.sin(DoAs)
 
@@ -102,6 +102,26 @@ for i in range(len(Spsi)):
     phi[i] = np.arcsin(np.angle(Spsi[i])/np.pi)
 esprit = np.degrees(phi)
 
+# RootMUSIC
+C = np.dot(Unoise, np.matrix(Unoise).H)
+C_l = np.zeros(2*len(C)-1, dtype=complex)
+for i in range(2*len(C)-1):
+    Cprom = np.diagonal(C, offset=(i-len(C)+1))
+    for j in range(len(Cprom)):
+        C_l[i] = C_l[i] + Cprom[j]
+z = np.roots(C_l)
+z1 = np.zeros(len(z), dtype=complex)
+for i in range(len(z)):
+    if np.abs(z[i]) < 1:
+        z1[i] = z[i]
+z2 = np.argsort(np.abs(z1))
+z3 = z2[(len(z2)-NumDOA):]
+z4 = z1[z3]
+z5 = np.zeros(len(z4))
+for i in range(len(z4)):
+    z5[i] = np.arcsin(np.angle(z4[i])/np.pi)
+rootmusic = np.degrees(np.sort(z5))
+print(np.abs(z1)-1)
 # plots
 plt.subplots(figsize=(10, 5), dpi=150)
 # plt.plot(np.real(Signal[0, :]),
@@ -124,6 +144,11 @@ plt.plot(esprit,
          'x',
          color='black',
          label='ESPRIT')
+plt.plot(rootmusic,
+         np.zeros(len(rootmusic)),
+         'x',
+         color='purple',
+         label='RootMUSIC')
 plt.grid(color='r',
          linestyle='-',
          linewidth=0.2)
