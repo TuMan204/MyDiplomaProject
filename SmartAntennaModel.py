@@ -17,7 +17,7 @@ dt = np.zeros(N)                    # сетка времени
 for i in range(N):
     dt[i] = i/Fd
 ElemArr = (np.arange(NumElem)).T    # массив элементов АР
-DoAs = np.array([-20, 0, 30])       # углы прихода сигналов
+DoAs = np.array([-10, 0, 10])       # углы прихода сигналов
 DoAs = np.radians(DoAs)
 sinDoAs = np.sin(DoAs)
 
@@ -38,7 +38,7 @@ for i in range(NumDOA):
 #                               * Fnes
 #                               * dt[j])                  # синус. сигнал
 
-AWGN = np.random.randn(NumElem, N) * 10**(-SNRdB/20)    # FIXME: уточнить
+AWGN = np.random.randn(NumElem, N) * 10**(-SNRdB/20)    # Аддитивный БГШ
 
 A = np.zeros((NumElem, NumDOA), dtype=complex)
 for i in range(NumDOA):
@@ -60,7 +60,7 @@ U, S, V = np.linalg.svd(R)
 Unoise = U[:, NumDOA:]
 
 # ОПРЕДЕЛЕНИЕ СЕКТОРА СКАНИРОВАНИЯ
-alpha = np.arange(-90, 90, 0.1)
+alpha = np.arange(-90, 90, 0.01)
 alpha = np.radians(alpha)
 sinAlpha = np.sin(alpha)
 X = np.zeros((NumElem, len(alpha)), dtype=complex)
@@ -128,7 +128,7 @@ for i in range(len(z4)):
     z5[i] = np.arcsin(np.angle(z4[i])/np.pi)
 rootmusic = np.degrees(np.sort(z5))*(-1)
 
-# plots
+# Plots
 plt.subplots(figsize=(10, 5), dpi=150)
 # plt.plot(np.real(Signal[0, :]),
 #          color='green',
