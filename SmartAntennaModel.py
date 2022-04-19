@@ -93,7 +93,7 @@ for i in range(len(alpha)):
 
 # ESPRIT
 Usig = U[:, :NumDOA]
-UsigX = np.matrix(np.matrix(Usig[:(NumElem-1), :]).T).H
+UsigX = np.linalg.pinv(np.matrix(Usig[:(NumElem-1), :]).T)
 UsigY = np.matrix(Usig[1:, :]).T
 Psi = np.dot(UsigY, UsigX)
 Spsi, Vpsi = np.linalg.eig(Psi)
